@@ -1,0 +1,39 @@
+name: task_manager
+description: Application de gestion de tâches desktop
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  # State management
+  flutter_riverpod: ^2.5.1
+  riverpod_annotation: ^2.3.5
+  # Entités immuables
+  freezed_annotation: ^2.4.4
+  json_annotation: ^4.9.0
+  # Navigation
+  auto_route: ^9.2.2
+  # Persistance
+  shared_preferences: ^2.3.2
+  # Fenêtre desktop
+  window_manager: ^0.4.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  # Génération de code
+  build_runner: ^2.4.13
+  freezed: ^2.5.7
+  json_serializable: ^6.8.0
+  riverpod_generator: ^2.4.3
+  auto_route_generator: ^9.0.0
+  # Tests
+  mockito: ^5.4.4
+
+flutter:
+  uses-material-design: true
