@@ -1,17 +1,17 @@
-# task_manager
+Architecture hexagonale, 
+Les entité task et projet crée avec freezed
+La navigation avec auto route (projet, auj, cette semaine et paramètre pour la sidebar)
+Crud des taches avec shared preferences avec la persistance des données et utilisation de provider
+Themes avec riverpod pour remonter l’info dans main avec une couleur par défaut
+les raccourci vlavier au moins 3 ctrl+n +F +D
+config de la fenêtre, le setup de window manager pour avoir une taille minimale avec nom suctom pour l'appli (nom du projet)
+test 2 unitaires avec un repo mocké avec le task repository avec mockito 
+CI/CD setup le ci de test et build dans .github/repo
+build multiplateforme
 
-A new Flutter project.
+BONUS:
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+branche ou direct main?
