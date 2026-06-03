@@ -1,14 +1,7 @@
-import 'package:auto_route/auto_route.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
 
-@RoutePage()
-class SettingsPage extends StatelessWidget {
-  const SettingsPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Paramètres'),
-    );
-  }
+void main() {
+  test('placeholder test', () {
+    expect(1 + 1, 2);
+  });
 }
