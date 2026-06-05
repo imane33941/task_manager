@@ -77,7 +77,7 @@ class ProjectsPage extends ConsumerWidget {
                 final newProject = Project(
                   id: DateTime.now().millisecondsSinceEpoch.toString(),
                   name: name,
-                  color: Colors.blue.value,
+                  color: Colors.blue.toARGB32(),
                 );
                 ref.read(projectListProvider.notifier).addProject(newProject);
                 Navigator.pop(context);
