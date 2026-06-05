@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:task_manager/domain/entities/task.dart';
+import 'package:task_manager/presentation/theme/priority_colors.dart';
 import 'package:task_manager/presentation/widgets/task_tile.dart';
 
 void main() {
@@ -12,13 +13,12 @@ void main() {
       createdAt: DateTime.now(),
     );
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: TaskTile(task: task),
-        ),
+    await tester.pumpWidget(MaterialApp(
+      theme: ThemeData(
+        extensions: const [PriorityColors.light],
       ),
-    );
+      home: Scaffold(body: TaskTile(task: task)),
+    ));
 
     expect(find.text('Ma tâche'), findsOneWidget);
     expect(find.text('Une description'), findsOneWidget);
