@@ -5,11 +5,25 @@ import 'package:task_manager/application/shared_preferences_provider.dart';
 import 'package:task_manager/application/theme_provider.dart';
 import 'package:task_manager/domain/entities/task.dart';
 import 'package:task_manager/infrastructure/repositories/shared_prefs_task_repository.dart';
+import 'package:window_manager/window_manager.dart';
 
 import 'presentation/router/app_router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await windowManager.ensureInitialized();
+  const windowOptions = WindowOptions(
+    size: Size(1200, 800),
+    minimumSize: Size(800, 600),
+    center: true,
+    title: 'Task Manager',
+  );
+  windowManager.waitUntilReadyToShow(windowOptions, () async {
+    await windowManager.show();
+    await windowManager.focus();
+  });
+
   final prefs = await SharedPreferences.getInstance();
   await _seedInitialDataIfNeeded(prefs);
 
