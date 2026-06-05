@@ -18,6 +18,7 @@ class AllTasksPage extends ConsumerStatefulWidget {
 
 class _AllTasksPageState extends ConsumerState<AllTasksPage> {
   final _searchFocus = FocusNode();
+  bool _isKanbanView = false;
 
   @override
   void dispose() {
@@ -30,12 +31,40 @@ class _AllTasksPageState extends ConsumerState<AllTasksPage> {
     final tasksAsync = ref.watch(filteredTasksProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Toutes les tâches')),
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'addTaskFab',
-        onPressed: () => showTaskDialog(context, ref),
-        child: const Icon(Icons.add),
+      appBar: AppBar(
+        title: const Text('Toutes les tâches'),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: SegmentedButton<bool>(
+              segments: const [
+                ButtonSegment(
+                  value: false,
+                  icon: Icon(Icons.view_list),
+                  tooltip: 'Vue liste',
+                ),
+                ButtonSegment(
+                  value: true,
+                  icon: Icon(Icons.view_kanban),
+                  tooltip: 'Vue tableau',
+                ),
+              ],
+              selected: {_isKanbanView},
+              onSelectionChanged: (selection) {
+                setState(() => _isKanbanView = selection.first);
+              },
+              showSelectedIcon: false,
+            ),
+          ),
+        ],
       ),
+      floatingActionButton: _isKanbanView
+          ? null
+          : FloatingActionButton(
+              heroTag: 'addTaskFab',
+              onPressed: () => showTaskDialog(context, ref),
+              child: const Icon(Icons.add),
+            ),
       body: Column(
         children: [
           Padding(
@@ -53,30 +82,35 @@ class _AllTasksPageState extends ConsumerState<AllTasksPage> {
             ),
           ),
           Expanded(
-            child: tasksAsync.when(
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (err, stack) => Center(child: Text('Erreur : $err')),
-              data: (tasks) {
-                if (tasks.isEmpty) {
-                  return const Center(child: Text('Aucune tâche'));
-                }
-                final todo =
-                    tasks.where((t) => t.status == TaskStatus.todo).toList();
-                final inProgress = tasks
-                    .where((t) => t.status == TaskStatus.inProgress)
-                    .toList();
-                final done =
-                    tasks.where((t) => t.status == TaskStatus.done).toList();
+            child: _isKanbanView
+                ? const Center(child: Text('Vue Kanban (à venir)'))
+                : tasksAsync.when(
+                    loading: () =>
+                        const Center(child: CircularProgressIndicator()),
+                    error: (err, stack) => Center(child: Text('Erreur : $err')),
+                    data: (tasks) {
+                      if (tasks.isEmpty) {
+                        return const Center(child: Text('Aucune tâche'));
+                      }
+                      final todo = tasks
+                          .where((t) => t.status == TaskStatus.todo)
+                          .toList();
+                      final inProgress = tasks
+                          .where((t) => t.status == TaskStatus.inProgress)
+                          .toList();
+                      final done = tasks
+                          .where((t) => t.status == TaskStatus.done)
+                          .toList();
 
-                return ListView(
-                  children: [
-                    _buildSection(context, ref, 'À faire', todo),
-                    _buildSection(context, ref, 'En cours', inProgress),
-                    _buildSection(context, ref, 'Terminée', done),
-                  ],
-                );
-              },
-            ),
+                      return ListView(
+                        children: [
+                          _buildSection(context, ref, 'À faire', todo),
+                          _buildSection(context, ref, 'En cours', inProgress),
+                          _buildSection(context, ref, 'Terminée', done),
+                        ],
+                      );
+                    },
+                  ),
           ),
         ],
       ),
