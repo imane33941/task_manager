@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../application/task_list_provider.dart';
+import '../../domain/entities/task.dart';
 
 @RoutePage()
 class TodayPage extends ConsumerWidget {
@@ -14,6 +15,10 @@ class TodayPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Aujourd\'hui')),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _showAddTaskDialog(context, ref),
+        child: const Icon(Icons.add),
+      ),
       body: tasksAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, stack) => Center(child: Text('Erreur : $err')),
@@ -34,6 +39,44 @@ class TodayPage extends ConsumerWidget {
           );
         },
       ),
+    );
+  }
+
+  void _showAddTaskDialog(BuildContext context, WidgetRef ref) {
+    final titleController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Nouvelle tâche'),
+          content: TextField(
+            controller: titleController,
+            autofocus: true,
+            decoration: const InputDecoration(labelText: 'Titre'),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Annuler'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                final title = titleController.text.trim();
+                if (title.isEmpty) return; // validation : titre requis
+                final newTask = Task(
+                  id: DateTime.now().millisecondsSinceEpoch.toString(),
+                  title: title,
+                  createdAt: DateTime.now(),
+                );
+                ref.read(taskListProvider.notifier).addTask(newTask);
+                Navigator.pop(context);
+              },
+              child: const Text('Ajouter'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
