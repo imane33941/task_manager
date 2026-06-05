@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+
 import 'app_router.gr.dart';
 
 @AutoRouterConfig()
@@ -9,8 +10,8 @@ class AppRouter extends RootStackRouter {
           path: '/',
           page: MainLayoutRoute.page,
           children: [
-            AutoRoute(
-                path: 'projects', page: ProjectsRoute.page, initial: true),
+            AutoRoute(path: 'all', page: AllTasksRoute.page, initial: true),
+            AutoRoute(path: 'projects', page: ProjectsRoute.page),
             AutoRoute(path: 'today', page: TodayRoute.page),
             AutoRoute(path: 'week', page: WeekRoute.page),
             AutoRoute(path: 'settings', page: SettingsRoute.page),
