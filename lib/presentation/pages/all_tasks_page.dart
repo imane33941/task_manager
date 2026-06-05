@@ -31,6 +31,7 @@ class _AllTasksPageState extends ConsumerState<AllTasksPage> {
     return Scaffold(
       appBar: AppBar(title: const Text('Toutes les tâches')),
       floatingActionButton: FloatingActionButton(
+        heroTag: 'addTaskFab',
         onPressed: () => showTaskDialog(context, ref),
         child: const Icon(Icons.add),
       ),

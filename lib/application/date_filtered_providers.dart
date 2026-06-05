@@ -21,3 +21,11 @@ final weekTasksProvider = Provider<AsyncValue<List<Task>>>((ref) {
         .toList();
   });
 });
+
+final tasksByProjectProvider =
+    Provider.family<AsyncValue<List<Task>>, String>((ref, projectId) {
+  final tasksAsync = ref.watch(taskListProvider);
+  return tasksAsync.whenData((tasks) {
+    return tasks.where((task) => task.projectId == projectId).toList();
+  });
+});
