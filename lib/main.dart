@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:task_manager/application/shared_preferences_provider.dart';
+import 'package:task_manager/application/theme_provider.dart';
 import 'package:task_manager/domain/entities/task.dart';
 import 'package:task_manager/infrastructure/repositories/shared_prefs_task_repository.dart';
 
@@ -48,12 +49,20 @@ Future<void> _seedInitialDataIfNeeded(SharedPreferences prefs) async {
   await prefs.setBool(seededKey, true);
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerStatefulWidget {
   const MyApp({super.key});
 
   @override
+  ConsumerState<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends ConsumerState<MyApp> {
+  final _appRouter = AppRouter();
+
+  @override
   Widget build(BuildContext context) {
-    final appRouter = AppRouter();
+    final themeMode = ref.watch(themeModeProvider);
+
     return MaterialApp.router(
       title: 'Task Manager',
       debugShowCheckedModeBanner: false,
@@ -61,7 +70,15 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      routerConfig: appRouter.config(),
+      darkTheme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.deepPurple,
+          brightness: Brightness.dark,
+        ),
+        useMaterial3: true,
+      ),
+      themeMode: themeMode,
+      routerConfig: _appRouter.config(),
     );
   }
 }
