@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:task_manager/presentation/widgets/task_dialog.dart';
 
 import '../../application/task_list_provider.dart';
 import '../../domain/entities/task.dart';
@@ -16,7 +17,7 @@ class TodayPage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Aujourd\'hui')),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _showTaskDialog(context, ref),
+        onPressed: () => showTaskDialog(context, ref),
         child: const Icon(Icons.add),
       ),
       body: tasksAsync.when(
@@ -33,7 +34,7 @@ class TodayPage extends ConsumerWidget {
               return ListTile(
                 title: Text(task.title),
                 subtitle: Text(task.description),
-                onTap: () => _showTaskDialog(context, ref, existingTask: task),
+                onTap: () => showTaskDialog(context, ref, existingTask: task),
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -50,53 +51,6 @@ class TodayPage extends ConsumerWidget {
           );
         },
       ),
-    );
-  }
-
-  void _showTaskDialog(BuildContext context, WidgetRef ref,
-      {Task? existingTask}) {
-    final isEditing = existingTask != null;
-    final titleController =
-        TextEditingController(text: existingTask?.title ?? '');
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(isEditing ? 'Modifier la tâche' : 'Nouvelle tâche'),
-          content: TextField(
-            controller: titleController,
-            autofocus: true,
-            decoration: const InputDecoration(labelText: 'Titre'),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Annuler'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                final title = titleController.text.trim();
-                if (title.isEmpty) return;
-
-                if (isEditing) {
-                  final updated = existingTask.copyWith(title: title);
-                  ref.read(taskListProvider.notifier).updateTask(updated);
-                } else {
-                  final newTask = Task(
-                    id: DateTime.now().millisecondsSinceEpoch.toString(),
-                    title: title,
-                    createdAt: DateTime.now(),
-                  );
-                  ref.read(taskListProvider.notifier).addTask(newTask);
-                }
-                Navigator.pop(context);
-              },
-              child: Text(isEditing ? 'Enregistrer' : 'Ajouter'),
-            ),
-          ],
-        );
-      },
     );
   }
 
