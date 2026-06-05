@@ -5,19 +5,25 @@ import 'package:task_manager/application/project_list_provider.dart';
 import '../../application/task_list_provider.dart';
 import '../../domain/entities/task.dart';
 
-void showTaskDialog(BuildContext context, WidgetRef ref, {Task? existingTask}) {
+void showTaskDialog(BuildContext context, WidgetRef ref,
+    {Task? existingTask, TaskStatus? initialStatus}) {
   showDialog(
     context: context,
-    builder: (context) =>
-        _TaskDialogContent(ref: ref, existingTask: existingTask),
+    builder: (context) => _TaskDialogContent(
+      ref: ref,
+      existingTask: existingTask,
+      initialStatus: initialStatus,
+    ),
   );
 }
 
 class _TaskDialogContent extends StatefulWidget {
   final WidgetRef ref;
   final Task? existingTask;
+  final TaskStatus? initialStatus;
 
-  const _TaskDialogContent({required this.ref, this.existingTask});
+  const _TaskDialogContent(
+      {required this.ref, this.existingTask, this.initialStatus});
 
   @override
   State<_TaskDialogContent> createState() => _TaskDialogContentState();
@@ -40,7 +46,8 @@ class _TaskDialogContentState extends State<_TaskDialogContent> {
         TextEditingController(text: widget.existingTask?.title ?? '');
     _dueDate = widget.existingTask?.dueDate;
     _priority = widget.existingTask?.priority ?? Priority.medium;
-    _status = widget.existingTask?.status ?? TaskStatus.todo;
+    _status =
+        widget.existingTask?.status ?? widget.initialStatus ?? TaskStatus.todo;
     _projectId = widget.existingTask?.projectId;
   }
 
