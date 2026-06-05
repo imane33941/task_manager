@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:task_manager/presentation/widgets/task_tile.dart';
 
 import '../../application/search_provider.dart';
 import '../../application/task_list_provider.dart';
@@ -61,22 +62,11 @@ class _TodayPageState extends ConsumerState<TodayPage> {
                   itemCount: tasks.length,
                   itemBuilder: (context, index) {
                     final task = tasks[index];
-                    return ListTile(
-                      title: Text(task.title),
-                      subtitle: Text(task.description),
+                    return TaskTile(
+                      task: task,
                       onTap: () =>
                           showTaskDialog(context, ref, existingTask: task),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(task.priority.name),
-                          IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
-                            tooltip: 'Supprimer',
-                            onPressed: () => _confirmDelete(context, ref, task),
-                          ),
-                        ],
-                      ),
+                      onDelete: () => _confirmDelete(context, ref, task),
                     );
                   },
                 );
