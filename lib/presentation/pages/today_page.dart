@@ -33,7 +33,17 @@ class TodayPage extends ConsumerWidget {
               return ListTile(
                 title: Text(task.title),
                 subtitle: Text(task.description),
-                trailing: Text(task.priority.name),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(task.priority.name),
+                    IconButton(
+                      icon: const Icon(Icons.delete, color: Colors.red),
+                      tooltip: 'Supprimer',
+                      onPressed: () => _confirmDelete(context, ref, task),
+                    ),
+                  ],
+                ),
               );
             },
           );
@@ -63,7 +73,7 @@ class TodayPage extends ConsumerWidget {
             ElevatedButton(
               onPressed: () {
                 final title = titleController.text.trim();
-                if (title.isEmpty) return; // validation : titre requis
+                if (title.isEmpty) return;
                 final newTask = Task(
                   id: DateTime.now().millisecondsSinceEpoch.toString(),
                   title: title,
@@ -73,6 +83,31 @@ class TodayPage extends ConsumerWidget {
                 Navigator.pop(context);
               },
               child: const Text('Ajouter'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _confirmDelete(BuildContext context, WidgetRef ref, Task task) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Supprimer la tâche'),
+          content: Text('Voulez-vous vraiment supprimer "${task.title}" ?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Annuler'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                ref.read(taskListProvider.notifier).deleteTask(task.id);
+                Navigator.pop(context);
+              },
+              child: const Text('Supprimer'),
             ),
           ],
         );
