@@ -15,6 +15,7 @@ class MainLayoutPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return AutoTabsRouter(
       routes: const [
+        AllTasksRoute(),
         ProjectsRoute(),
         TodayRoute(),
         WeekRoute(),
@@ -31,7 +32,7 @@ class MainLayoutPage extends ConsumerWidget {
               showTaskDialog(context, ref);
             },
             const SingleActivator(LogicalKeyboardKey.keyF, control: true): () {
-              tabsRouter.setActiveIndex(1); // index 1 = Aujourd'hui
+              tabsRouter.setActiveIndex(0); // index 1 = Aujourd'hui
             },
           },
           child: Focus(
@@ -44,6 +45,10 @@ class MainLayoutPage extends ConsumerWidget {
                     onDestinationSelected: tabsRouter.setActiveIndex,
                     labelType: NavigationRailLabelType.all,
                     destinations: const [
+                      NavigationRailDestination(
+                        icon: Icon(Icons.list),
+                        label: Text('Toutes'),
+                      ),
                       NavigationRailDestination(
                         icon: Icon(Icons.folder),
                         label: Text('Projets'),

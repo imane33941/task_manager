@@ -6,7 +6,7 @@ part of 'project_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$projectRepositoryHash() => r'93c1c97bcaf6e86cae9eea3df86bc820f5c1d64c';
+String _$projectRepositoryHash() => r'aa017b3a516220bf3259013911079f7243a61a12';
 
 /// See also [projectRepository].
 @ProviderFor(projectRepository)
