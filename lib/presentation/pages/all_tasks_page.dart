@@ -1,11 +1,12 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:task_manager/domain/entities/task.dart';
+import 'package:task_manager/presentation/widgets/task_tile.dart';
 
 import '../../application/search_provider.dart';
 import '../../application/task_list_provider.dart';
 import '../widgets/task_dialog.dart';
-import '../widgets/task_tile.dart';
 
 @RoutePage()
 class AllTasksPage extends ConsumerStatefulWidget {
@@ -59,17 +60,20 @@ class _AllTasksPageState extends ConsumerState<AllTasksPage> {
                 if (tasks.isEmpty) {
                   return const Center(child: Text('Aucune tâche'));
                 }
-                return ListView.builder(
-                  itemCount: tasks.length,
-                  itemBuilder: (context, index) {
-                    final task = tasks[index];
-                    return TaskTile(
-                      task: task,
-                      onTap: () =>
-                          showTaskDialog(context, ref, existingTask: task),
-                      onDelete: () => _confirmDelete(context, ref, task),
-                    );
-                  },
+                final todo =
+                    tasks.where((t) => t.status == TaskStatus.todo).toList();
+                final inProgress = tasks
+                    .where((t) => t.status == TaskStatus.inProgress)
+                    .toList();
+                final done =
+                    tasks.where((t) => t.status == TaskStatus.done).toList();
+
+                return ListView(
+                  children: [
+                    _buildSection(context, ref, 'À faire', todo),
+                    _buildSection(context, ref, 'En cours', inProgress),
+                    _buildSection(context, ref, 'Terminée', done),
+                  ],
                 );
               },
             ),
@@ -101,6 +105,21 @@ class _AllTasksPageState extends ConsumerState<AllTasksPage> {
           ],
         );
       },
+    );
+  }
+
+  Widget _buildSection(
+      BuildContext context, WidgetRef ref, String title, List tasks) {
+    return ExpansionTile(
+      initiallyExpanded: true,
+      title: Text('$title (${tasks.length})'),
+      children: tasks.map<Widget>((task) {
+        return TaskTile(
+          task: task,
+          onTap: () => showTaskDialog(context, ref, existingTask: task),
+          onDelete: () => _confirmDelete(context, ref, task),
+        );
+      }).toList(),
     );
   }
 }
