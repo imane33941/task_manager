@@ -13,27 +13,30 @@ class MainLayoutPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return CallbackShortcuts(
-      bindings: {
-        const SingleActivator(LogicalKeyboardKey.keyD, control: true): () {
-          ref.read(themeModeProvider.notifier).toggle();
-        },
-        const SingleActivator(LogicalKeyboardKey.keyN, control: true): () {
-          showTaskDialog(context, ref);
-        },
-      },
-      child: Focus(
-        autofocus: true,
-        child: AutoTabsRouter(
-          routes: const [
-            ProjectsRoute(),
-            TodayRoute(),
-            WeekRoute(),
-            SettingsRoute(),
-          ],
-          builder: (context, child) {
-            final tabsRouter = AutoTabsRouter.of(context);
-            return Scaffold(
+    return AutoTabsRouter(
+      routes: const [
+        ProjectsRoute(),
+        TodayRoute(),
+        WeekRoute(),
+        SettingsRoute(),
+      ],
+      builder: (context, child) {
+        final tabsRouter = AutoTabsRouter.of(context);
+        return CallbackShortcuts(
+          bindings: {
+            const SingleActivator(LogicalKeyboardKey.keyD, control: true): () {
+              ref.read(themeModeProvider.notifier).toggle();
+            },
+            const SingleActivator(LogicalKeyboardKey.keyN, control: true): () {
+              showTaskDialog(context, ref);
+            },
+            const SingleActivator(LogicalKeyboardKey.keyF, control: true): () {
+              tabsRouter.setActiveIndex(1); // index 1 = Aujourd'hui
+            },
+          },
+          child: Focus(
+            autofocus: true,
+            child: Scaffold(
               body: Row(
                 children: [
                   NavigationRail(
@@ -63,10 +66,10 @@ class MainLayoutPage extends ConsumerWidget {
                   Expanded(child: child),
                 ],
               ),
-            );
-          },
-        ),
-      ),
+            ),
+          ),
+        );
+      },
     );
   }
 }
