@@ -90,16 +90,52 @@ class _Column extends ConsumerWidget {
             ),
           ),
           Expanded(
-            child: ListView(
-              padding: const EdgeInsets.only(bottom: 8),
-              children: tasks.map((task) {
-                return TaskTile(
-                  task: task,
-                  onTap: () => showTaskDialog(context, ref, existingTask: task),
-                  onDelete: () =>
-                      ref.read(taskListProvider.notifier).deleteTask(task.id),
+            child: DragTarget<Task>(
+              onAcceptWithDetails: (details) {
+                final draggedTask = details.data;
+                if (draggedTask.status != status) {
+                  final updated = draggedTask.copyWith(status: status);
+                  ref.read(taskListProvider.notifier).updateTask(updated);
+                }
+              },
+              builder: (context, candidateData, rejectedData) {
+                return Container(
+                  color: candidateData.isNotEmpty
+                      ? theme.colorScheme.primary.withValues(alpha: 0.1)
+                      : Colors.transparent,
+                  child: ListView(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    children: tasks.map((task) {
+                      return Draggable<Task>(
+                        data: task,
+                        feedback: Material(
+                          color: Colors.transparent,
+                          child: SizedBox(
+                            width: 250,
+                            child: Opacity(
+                              opacity: 0.85,
+                              child: TaskTile(task: task, showDragHandle: true),
+                            ),
+                          ),
+                        ),
+                        childWhenDragging: Opacity(
+                          opacity: 0.4,
+                          child: TaskTile(task: task, showDragHandle: true),
+                        ),
+                        child: TaskTile(
+                          task: task,
+                          showDragHandle: true,
+                          onTap: () =>
+                              showTaskDialog(context, ref, existingTask: task),
+                          onDelete: () => ref
+                              .read(taskListProvider.notifier)
+                              .deleteTask(task.id),
+                        ),
+                      );
+                    }).toList(),
+                  ),
                 );
-              }).toList(),
+              },
             ),
           ),
         ],
