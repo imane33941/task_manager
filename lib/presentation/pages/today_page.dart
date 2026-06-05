@@ -16,7 +16,7 @@ class TodayPage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Aujourd\'hui')),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _showAddTaskDialog(context, ref),
+        onPressed: () => _showTaskDialog(context, ref),
         child: const Icon(Icons.add),
       ),
       body: tasksAsync.when(
@@ -33,6 +33,7 @@ class TodayPage extends ConsumerWidget {
               return ListTile(
                 title: Text(task.title),
                 subtitle: Text(task.description),
+                onTap: () => _showTaskDialog(context, ref, existingTask: task),
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -52,14 +53,17 @@ class TodayPage extends ConsumerWidget {
     );
   }
 
-  void _showAddTaskDialog(BuildContext context, WidgetRef ref) {
-    final titleController = TextEditingController();
+  void _showTaskDialog(BuildContext context, WidgetRef ref,
+      {Task? existingTask}) {
+    final isEditing = existingTask != null;
+    final titleController =
+        TextEditingController(text: existingTask?.title ?? '');
 
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Nouvelle tâche'),
+          title: Text(isEditing ? 'Modifier la tâche' : 'Nouvelle tâche'),
           content: TextField(
             controller: titleController,
             autofocus: true,
@@ -74,15 +78,21 @@ class TodayPage extends ConsumerWidget {
               onPressed: () {
                 final title = titleController.text.trim();
                 if (title.isEmpty) return;
-                final newTask = Task(
-                  id: DateTime.now().millisecondsSinceEpoch.toString(),
-                  title: title,
-                  createdAt: DateTime.now(),
-                );
-                ref.read(taskListProvider.notifier).addTask(newTask);
+
+                if (isEditing) {
+                  final updated = existingTask.copyWith(title: title);
+                  ref.read(taskListProvider.notifier).updateTask(updated);
+                } else {
+                  final newTask = Task(
+                    id: DateTime.now().millisecondsSinceEpoch.toString(),
+                    title: title,
+                    createdAt: DateTime.now(),
+                  );
+                  ref.read(taskListProvider.notifier).addTask(newTask);
+                }
                 Navigator.pop(context);
               },
-              child: const Text('Ajouter'),
+              child: Text(isEditing ? 'Enregistrer' : 'Ajouter'),
             ),
           ],
         );
