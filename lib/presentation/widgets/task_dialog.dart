@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:task_manager/application/project_list_provider.dart';
 
 import '../../application/task_list_provider.dart';
 import '../../domain/entities/task.dart';
@@ -26,6 +27,9 @@ class _TaskDialogContentState extends State<_TaskDialogContent> {
   late final TextEditingController _titleController;
   DateTime? _dueDate;
   bool _showCalendar = false;
+  Priority _priority = Priority.medium;
+  TaskStatus _status = TaskStatus.todo;
+  String? _projectId;
 
   bool get _isEditing => widget.existingTask != null;
 
@@ -35,6 +39,9 @@ class _TaskDialogContentState extends State<_TaskDialogContent> {
     _titleController =
         TextEditingController(text: widget.existingTask?.title ?? '');
     _dueDate = widget.existingTask?.dueDate;
+    _priority = widget.existingTask?.priority ?? Priority.medium;
+    _status = widget.existingTask?.status ?? TaskStatus.todo;
+    _projectId = widget.existingTask?.projectId;
   }
 
   @override
@@ -51,6 +58,9 @@ class _TaskDialogContentState extends State<_TaskDialogContent> {
       final updated = widget.existingTask!.copyWith(
         title: title,
         dueDate: _dueDate,
+        priority: _priority,
+        status: _status,
+        projectId: _projectId,
       );
       widget.ref.read(taskListProvider.notifier).updateTask(updated);
     } else {
@@ -58,6 +68,9 @@ class _TaskDialogContentState extends State<_TaskDialogContent> {
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         title: title,
         dueDate: _dueDate,
+        priority: _priority,
+        status: _status,
+        projectId: _projectId,
         createdAt: DateTime.now(),
       );
       widget.ref.read(taskListProvider.notifier).addTask(newTask);
@@ -126,6 +139,81 @@ class _TaskDialogContentState extends State<_TaskDialogContent> {
                   },
                 ),
               ),
+            const SizedBox(height: 16),
+            DropdownButtonFormField<Priority>(
+              initialValue: _priority,
+              decoration: const InputDecoration(
+                labelText: 'Priorité',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.flag),
+              ),
+              items: Priority.values.map((priority) {
+                return DropdownMenuItem(
+                  value: priority,
+                  child: Text(priority.name),
+                );
+              }).toList(),
+              onChanged: (value) {
+                if (value != null) {
+                  setState(() => _priority = value);
+                }
+              },
+            ),
+            const SizedBox(height: 16),
+            DropdownButtonFormField<TaskStatus>(
+              initialValue: _status,
+              decoration: const InputDecoration(
+                labelText: 'Statut',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.check_circle_outline),
+              ),
+              items: TaskStatus.values.map((status) {
+                return DropdownMenuItem(
+                  value: status,
+                  child: Text(status.name),
+                );
+              }).toList(),
+              onChanged: (value) {
+                if (value != null) {
+                  setState(() => _status = value);
+                }
+              },
+            ),
+            const SizedBox(height: 16),
+            Consumer(
+              builder: (context, ref, _) {
+                final projectsAsync = ref.watch(projectListProvider);
+                return projectsAsync.when(
+                  loading: () => const SizedBox.shrink(),
+                  error: (e, _) => const SizedBox.shrink(),
+                  data: (projects) {
+                    return DropdownButtonFormField<String?>(
+                      initialValue: _projectId,
+                      decoration: const InputDecoration(
+                        labelText: 'Projet',
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.folder),
+                      ),
+                      items: [
+                        const DropdownMenuItem<String?>(
+                          value: null,
+                          child: Text('Aucun projet'),
+                        ),
+                        ...projects.map((project) {
+                          return DropdownMenuItem<String?>(
+                            value: project.id,
+                            child: Text(project.name),
+                          );
+                        }),
+                      ],
+                      onChanged: (value) {
+                        setState(() => _projectId = value);
+                      },
+                    );
+                  },
+                );
+              },
+            ),
           ],
         ),
       ),
