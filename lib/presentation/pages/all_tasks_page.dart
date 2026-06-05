@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:task_manager/domain/entities/task.dart';
+import 'package:task_manager/presentation/widgets/kanban_board.dart';
 import 'package:task_manager/presentation/widgets/task_tile.dart';
 
 import '../../application/search_provider.dart';
@@ -82,35 +83,32 @@ class _AllTasksPageState extends ConsumerState<AllTasksPage> {
             ),
           ),
           Expanded(
-            child: _isKanbanView
-                ? const Center(child: Text('Vue Kanban (à venir)'))
-                : tasksAsync.when(
-                    loading: () =>
-                        const Center(child: CircularProgressIndicator()),
-                    error: (err, stack) => Center(child: Text('Erreur : $err')),
-                    data: (tasks) {
-                      if (tasks.isEmpty) {
-                        return const Center(child: Text('Aucune tâche'));
-                      }
-                      final todo = tasks
-                          .where((t) => t.status == TaskStatus.todo)
-                          .toList();
-                      final inProgress = tasks
-                          .where((t) => t.status == TaskStatus.inProgress)
-                          .toList();
-                      final done = tasks
-                          .where((t) => t.status == TaskStatus.done)
-                          .toList();
-
-                      return ListView(
-                        children: [
-                          _buildSection(context, ref, 'À faire', todo),
-                          _buildSection(context, ref, 'En cours', inProgress),
-                          _buildSection(context, ref, 'Terminée', done),
-                        ],
-                      );
-                    },
-                  ),
+            child: tasksAsync.when(
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (err, stack) => Center(child: Text('Erreur : $err')),
+              data: (tasks) {
+                if (tasks.isEmpty) {
+                  return const Center(child: Text('Aucune tâche'));
+                }
+                if (_isKanbanView) {
+                  return KanbanBoard(tasks: tasks);
+                }
+                final todo =
+                    tasks.where((t) => t.status == TaskStatus.todo).toList();
+                final inProgress = tasks
+                    .where((t) => t.status == TaskStatus.inProgress)
+                    .toList();
+                final done =
+                    tasks.where((t) => t.status == TaskStatus.done).toList();
+                return ListView(
+                  children: [
+                    _buildSection(context, ref, 'À faire', todo),
+                    _buildSection(context, ref, 'En cours', inProgress),
+                    _buildSection(context, ref, 'Terminée', done),
+                  ],
+                );
+              },
+            ),
           ),
         ],
       ),

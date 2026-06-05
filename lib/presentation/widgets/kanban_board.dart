@@ -69,7 +69,6 @@ class _Column extends ConsumerWidget {
       ),
       child: Column(
         children: [
-          // En-tête de colonne avec titre + compteur + bouton +
           Padding(
             padding: const EdgeInsets.all(12),
             child: Row(
@@ -90,7 +89,6 @@ class _Column extends ConsumerWidget {
               ],
             ),
           ),
-          // Liste des tâches de la colonne
           Expanded(
             child: ListView(
               padding: const EdgeInsets.only(bottom: 8),
