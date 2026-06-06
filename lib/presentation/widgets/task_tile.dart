@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_manager/core/date_extensions.dart';
 
 import '../../domain/entities/task.dart';
 import '../theme/priority_colors.dart';
@@ -123,12 +124,35 @@ class TaskTile extends StatelessWidget {
                           ),
                           if (task.dueDate != null) ...[
                             const SizedBox(width: 10),
-                            Icon(Icons.event, size: 13, color: theme.hintColor),
-                            const SizedBox(width: 3),
-                            Text(
-                              '${task.dueDate!.day}/${task.dueDate!.month}',
-                              style: theme.textTheme.bodySmall
-                                  ?.copyWith(color: theme.hintColor),
+                            Builder(
+                              builder: (context) {
+                                final overdue = task.dueDate!.isOverdue &&
+                                    task.status != TaskStatus.done;
+                                final dateColor =
+                                    overdue ? Colors.red : theme.hintColor;
+                                return Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      overdue
+                                          ? Icons.warning_amber_rounded
+                                          : Icons.event,
+                                      size: 13,
+                                      color: dateColor,
+                                    ),
+                                    const SizedBox(width: 3),
+                                    Text(
+                                      task.dueDate!.formatted,
+                                      style:
+                                          theme.textTheme.bodySmall?.copyWith(
+                                        color: dateColor,
+                                        fontWeight:
+                                            overdue ? FontWeight.bold : null,
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
                             ),
                           ],
                         ],
