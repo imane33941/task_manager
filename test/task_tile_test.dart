@@ -22,6 +22,6 @@ void main() {
 
     expect(find.text('Ma tâche'), findsOneWidget);
     expect(find.text('Une description'), findsOneWidget);
-    expect(find.byIcon(Icons.delete), findsOneWidget);
+    expect(find.text('⚡'), findsOneWidget);
   });
 }

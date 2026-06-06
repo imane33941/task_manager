@@ -5,6 +5,7 @@ import 'package:task_manager/application/shared_preferences_provider.dart';
 import 'package:task_manager/application/theme_provider.dart';
 import 'package:task_manager/domain/entities/task.dart';
 import 'package:task_manager/infrastructure/repositories/shared_prefs_task_repository.dart';
+import 'package:task_manager/presentation/theme/priority_colors.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'presentation/router/app_router.dart';
@@ -81,15 +82,21 @@ class _MyAppState extends ConsumerState<MyApp> {
       title: 'Task Manager',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFFC65D45),
+        ),
         useMaterial3: true,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+        extensions: const [PriorityColors.light],
       ),
       darkTheme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.deepPurple,
+          seedColor: const Color(0xFFC65D45),
           brightness: Brightness.dark,
         ),
         useMaterial3: true,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+        extensions: const [PriorityColors.light],
       ),
       themeMode: themeMode,
       routerConfig: _appRouter.config(),
