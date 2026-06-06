@@ -9,13 +9,15 @@ class TaskTile extends StatelessWidget {
   final VoidCallback? onTap;
   final VoidCallback? onDelete;
   final bool showDragHandle;
+  final ValueChanged<bool>? onToggleDone;
 
   const TaskTile(
       {super.key,
       required this.task,
       this.onTap,
       this.onDelete,
-      this.showDragHandle = false});
+      this.showDragHandle = false,
+      this.onToggleDone});
 
   String get _priorityEmoji {
     switch (task.priority) {
@@ -65,6 +67,15 @@ class TaskTile extends StatelessWidget {
                       size: 18, color: Theme.of(context).hintColor),
                   const SizedBox(width: 4),
                 ],
+                if (onToggleDone != null) ...[
+                  Checkbox(
+                    value: task.status == TaskStatus.done,
+                    onChanged: (checked) {
+                      onToggleDone!(checked ?? false);
+                    },
+                  ),
+                  const SizedBox(width: 4),
+                ],
                 // Emoji de priorité dans une pastille
                 Container(
                   width: 44,
@@ -88,6 +99,12 @@ class TaskTile extends StatelessWidget {
                         task.title,
                         style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w600,
+                          decoration: task.status == TaskStatus.done
+                              ? TextDecoration.lineThrough
+                              : null,
+                          color: task.status == TaskStatus.done
+                              ? theme.hintColor
+                              : null,
                         ),
                       ),
                       if (task.description.isNotEmpty) ...[

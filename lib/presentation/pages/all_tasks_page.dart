@@ -150,6 +150,11 @@ class _AllTasksPageState extends ConsumerState<AllTasksPage> {
           task: task,
           onTap: () => showTaskDialog(context, ref, existingTask: task),
           onDelete: () => _confirmDelete(context, ref, task),
+          onToggleDone: (done) {
+            final newStatus = done ? TaskStatus.done : TaskStatus.todo;
+            final updated = task.copyWith(status: newStatus);
+            ref.read(taskListProvider.notifier).updateTask(updated);
+          },
         );
       }).toList(),
     );
