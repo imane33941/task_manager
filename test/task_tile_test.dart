@@ -13,16 +13,12 @@ void main() {
       createdAt: DateTime.now(),
     );
 
-    await tester.pumpWidget(
-      MaterialApp(
-        theme: ThemeData(
-          extensions: const [PriorityColors.light],
-        ),
-        home: Scaffold(
-          body: TaskTile(task: task),
-        ),
+    await tester.pumpWidget(MaterialApp(
+      theme: ThemeData(
+        extensions: const [PriorityColors.light],
       ),
-    );
+      home: Scaffold(body: TaskTile(task: task)),
+    ));
 
     expect(find.text('Ma tâche'), findsOneWidget);
     expect(find.text('Une description'), findsOneWidget);
