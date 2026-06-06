@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:task_manager/application/project_list_provider.dart';
+import 'package:task_manager/core/date_extensions.dart';
 
 import '../../application/task_list_provider.dart';
 import '../../domain/entities/task.dart';
@@ -124,9 +125,7 @@ class _TaskDialogContentState extends State<_TaskDialogContent> {
                           : Icons.expand_more),
                 ),
                 child: Text(
-                  _dueDate == null
-                      ? 'Aucune échéance'
-                      : '${_dueDate!.day}/${_dueDate!.month}/${_dueDate!.year}',
+                  _dueDate == null ? 'Aucune échéance' : _dueDate!.formatted,
                 ),
               ),
             ),
