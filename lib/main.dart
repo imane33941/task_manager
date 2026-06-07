@@ -83,7 +83,7 @@ class _MyAppState extends ConsumerState<MyApp> {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFFC65D45),
+          seedColor: const Color(0xFF4F46E5),
         ),
         useMaterial3: true,
         visualDensity: VisualDensity.adaptivePlatformDensity,
@@ -91,7 +91,7 @@ class _MyAppState extends ConsumerState<MyApp> {
       ),
       darkTheme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFFC65D45),
+          seedColor: const Color(0xFF4F46E5),
           brightness: Brightness.dark,
         ),
         useMaterial3: true,

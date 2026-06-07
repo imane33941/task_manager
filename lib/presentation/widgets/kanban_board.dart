@@ -8,8 +8,9 @@ import 'task_tile.dart';
 
 class KanbanBoard extends ConsumerWidget {
   final List<Task> tasks;
+  final ValueChanged<Task>? onTaskTap;
 
-  const KanbanBoard({super.key, required this.tasks});
+  const KanbanBoard({super.key, required this.tasks, this.onTaskTap});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -26,6 +27,7 @@ class KanbanBoard extends ConsumerWidget {
             title: 'À faire',
             status: TaskStatus.todo,
             tasks: todo,
+            onTaskTap: onTaskTap,
           ),
         ),
         Expanded(
@@ -33,6 +35,7 @@ class KanbanBoard extends ConsumerWidget {
             title: 'En cours',
             status: TaskStatus.inProgress,
             tasks: inProgress,
+            onTaskTap: onTaskTap,
           ),
         ),
         Expanded(
@@ -40,6 +43,7 @@ class KanbanBoard extends ConsumerWidget {
             title: 'Terminée',
             status: TaskStatus.done,
             tasks: done,
+            onTaskTap: onTaskTap,
           ),
         ),
       ],
@@ -51,11 +55,13 @@ class _Column extends ConsumerWidget {
   final String title;
   final TaskStatus status;
   final List<Task> tasks;
+  final ValueChanged<Task>? onTaskTap;
 
   const _Column({
     required this.title,
     required this.status,
     required this.tasks,
+    this.onTaskTap,
   });
 
   @override
@@ -125,8 +131,10 @@ class _Column extends ConsumerWidget {
                         child: TaskTile(
                           task: task,
                           showDragHandle: true,
-                          onTap: () =>
-                              showTaskDialog(context, ref, existingTask: task),
+                          onTap: onTaskTap != null
+                              ? () => onTaskTap!(task)
+                              : () => showTaskDialog(context, ref,
+                                  existingTask: task),
                           onDelete: () => ref
                               .read(taskListProvider.notifier)
                               .deleteTask(task.id),
