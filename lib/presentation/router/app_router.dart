@@ -10,6 +10,8 @@ class AppRouter extends RootStackRouter {
           path: '/',
           page: MainLayoutRoute.page,
           children: [
+            AutoRoute(
+                path: 'dashboard', page: DashboardRoute.page, initial: true),
             AutoRoute(path: 'all', page: AllTasksRoute.page, initial: true),
             AutoRoute(path: 'projects', page: ProjectsRoute.page),
             AutoRoute(path: 'today', page: TodayRoute.page),
