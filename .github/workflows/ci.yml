@@ -8,24 +8,90 @@ on:
 
 jobs:
   test:
+    name: Analyse & tests
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout du code
         uses: actions/checkout@v4
 
-      - name: Setup Flutter
+      - name: Installation de Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: stable
+          cache: true
 
-      - name: Install dependencies
+      - name: Dépendances
         run: flutter pub get
 
-      - name: Generate code
+      - name: Génération de code (Freezed, Riverpod, auto_route)
         run: dart run build_runner build --delete-conflicting-outputs
 
-      - name: Analyze
+      - name: Analyse statique
         run: flutter analyze
 
-      - name: Run tests
+      - name: Tests unitaires
         run: flutter test
+
+  build:
+    name: Build ${{ matrix.target }}
+    needs: test
+    strategy:
+      fail-fast: false
+      matrix:
+       include:
+          - os: macos-latest
+            target: macos
+            create: flutter create . --platforms=macos
+            enable: flutter config --enable-macos-desktop
+            build: flutter build macos --release
+            artifact_path: build/macos/Build/Products/Release
+          - os: windows-latest
+            target: windows
+            create: flutter create . --platforms=windows
+            enable: flutter config --enable-windows-desktop
+            build: flutter build windows --release
+            artifact_path: build/windows/x64/runner/Release
+          - os: ubuntu-latest
+            target: linux
+            create: flutter create . --platforms=linux
+            enable: flutter config --enable-linux-desktop
+            build: flutter build linux --release
+            artifact_path: build/linux/x64/release/bundle
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Dépendances système (Linux uniquement)
+        if: matrix.target == 'linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev
+
+      - name: Installation de Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Activation du support desktop
+        run: ${{ matrix.enable }}
+      
+      - name: Génération des fichiers de plateforme
+        run: ${{ matrix.create }}
+
+      - name: Dépendances
+        run: flutter pub get
+
+      - name: Génération de code (Freezed, Riverpod, auto_route)
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Build ${{ matrix.target }}
+        run: ${{ matrix.build }}
+
+      - name: Publication de l'artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: task_manager-${{ matrix.target }}
+          path: ${{ matrix.artifact_path }}
+          if-no-files-found: error
