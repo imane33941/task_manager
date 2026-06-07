@@ -38,19 +38,22 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
+       include:
           - os: macos-latest
             target: macos
+            create: flutter create . --platforms=macos
             enable: flutter config --enable-macos-desktop
             build: flutter build macos --release
             artifact_path: build/macos/Build/Products/Release
           - os: windows-latest
             target: windows
+            create: flutter create . --platforms=windows
             enable: flutter config --enable-windows-desktop
             build: flutter build windows --release
             artifact_path: build/windows/x64/runner/Release
           - os: ubuntu-latest
             target: linux
+            create: flutter create . --platforms=linux
             enable: flutter config --enable-linux-desktop
             build: flutter build linux --release
             artifact_path: build/linux/x64/release/bundle
@@ -73,6 +76,9 @@ jobs:
 
       - name: Activation du support desktop
         run: ${{ matrix.enable }}
+      
+      - name: Génération des fichiers de plateforme
+        run: ${{ matrix.create }}
 
       - name: Dépendances
         run: flutter pub get
