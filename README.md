@@ -389,5 +389,3 @@ Implémentés via `CallbackShortcuts` dans `MainLayoutPage`.
 - [x] **Bonus** : filtres + recherche, drag & drop (Kanban), tableau de bord de statistiques, build multiplateforme + artifacts téléchargeables
 
 ---
-
-_Rendu à envoyer par mail à `loic.kervran@ynov.com` avec le lien du dépôt GitHub._
