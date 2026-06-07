@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:task_manager/core/enum_labels.dart';
 import 'package:task_manager/domain/entities/task.dart';
 import 'package:task_manager/presentation/widgets/kanban_board.dart';
 import 'package:task_manager/presentation/widgets/task_tile.dart';
@@ -30,6 +31,8 @@ class _AllTasksPageState extends ConsumerState<AllTasksPage> {
   @override
   Widget build(BuildContext context) {
     final tasksAsync = ref.watch(filteredTasksProvider);
+    final statusFilter = ref.watch(statusFilterProvider);
+    final priorityFilter = ref.watch(priorityFilterProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -80,6 +83,63 @@ class _AllTasksPageState extends ConsumerState<AllTasksPage> {
               onChanged: (value) {
                 ref.read(searchQueryProvider.notifier).setQuery(value);
               },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+            child: Row(
+              children: [
+                Expanded(
+                  child: DropdownButtonFormField<TaskStatus?>(
+                    initialValue: statusFilter,
+                    isExpanded: true,
+                    decoration: const InputDecoration(
+                      labelText: 'Statut',
+                      border: OutlineInputBorder(),
+                      isDense: true,
+                    ),
+                    items: [
+                      const DropdownMenuItem<TaskStatus?>(
+                        value: null,
+                        child: Text('Tous'),
+                      ),
+                      ...TaskStatus.values
+                          .map((s) => DropdownMenuItem<TaskStatus?>(
+                                value: s,
+                                child: Text(s.label),
+                              )),
+                    ],
+                    onChanged: (value) => ref
+                        .read(statusFilterProvider.notifier)
+                        .setStatus(value),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: DropdownButtonFormField<Priority?>(
+                    initialValue: priorityFilter,
+                    isExpanded: true,
+                    decoration: const InputDecoration(
+                      labelText: 'Priorité',
+                      border: OutlineInputBorder(),
+                      isDense: true,
+                    ),
+                    items: [
+                      const DropdownMenuItem<Priority?>(
+                        value: null,
+                        child: Text('Toutes'),
+                      ),
+                      ...Priority.values.map((p) => DropdownMenuItem<Priority?>(
+                            value: p,
+                            child: Text(p.label),
+                          )),
+                    ],
+                    onChanged: (value) => ref
+                        .read(priorityFilterProvider.notifier)
+                        .setPriority(value),
+                  ),
+                ),
+              ],
             ),
           ),
           Expanded(
@@ -142,6 +202,7 @@ class _AllTasksPageState extends ConsumerState<AllTasksPage> {
 
   Widget _buildSection(
       BuildContext context, WidgetRef ref, String title, List tasks) {
+    if (tasks.isEmpty) return const SizedBox.shrink();
     return ExpansionTile(
       initiallyExpanded: true,
       title: Text('$title (${tasks.length})'),
