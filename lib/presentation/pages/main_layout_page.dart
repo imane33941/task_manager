@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:task_manager/application/search_provider.dart';
 import 'package:task_manager/presentation/widgets/task_dialog.dart';
 
 import '../../application/theme_provider.dart';
@@ -15,6 +16,7 @@ class MainLayoutPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return AutoTabsRouter(
       routes: const [
+        DashboardRoute(),
         AllTasksRoute(),
         ProjectsRoute(),
         TodayRoute(),
@@ -32,7 +34,10 @@ class MainLayoutPage extends ConsumerWidget {
               showTaskDialog(context, ref);
             },
             const SingleActivator(LogicalKeyboardKey.keyF, control: true): () {
-              tabsRouter.setActiveIndex(0); // index 1 = Aujourd'hui
+              tabsRouter.setActiveIndex(0);
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                ref.read(searchFocusProvider).requestFocus();
+              });
             },
           },
           child: Focus(
@@ -45,6 +50,10 @@ class MainLayoutPage extends ConsumerWidget {
                     onDestinationSelected: tabsRouter.setActiveIndex,
                     labelType: NavigationRailLabelType.all,
                     destinations: const [
+                      NavigationRailDestination(
+                        icon: Icon(Icons.dashboard),
+                        label: Text('Accueil'),
+                      ),
                       NavigationRailDestination(
                         icon: Icon(Icons.list),
                         label: Text('Toutes'),
