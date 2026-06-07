@@ -1,8 +1,14 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:task_manager/application/task_list_provider.dart';
 import 'package:task_manager/domain/entities/task.dart';
 
-// --- Recherche par titre ---
+final searchFocusProvider = Provider<FocusNode>((ref) {
+  final node = FocusNode();
+  ref.onDispose(node.dispose);
+  return node;
+});
+
 class SearchQueryNotifier extends Notifier<String> {
   @override
   String build() => '';
@@ -15,7 +21,6 @@ class SearchQueryNotifier extends Notifier<String> {
 final searchQueryProvider =
     NotifierProvider<SearchQueryNotifier, String>(SearchQueryNotifier.new);
 
-// --- Filtre par statut (null = tous) ---
 class StatusFilterNotifier extends Notifier<TaskStatus?> {
   @override
   TaskStatus? build() => null;
@@ -27,7 +32,6 @@ final statusFilterProvider =
     NotifierProvider<StatusFilterNotifier, TaskStatus?>(
         StatusFilterNotifier.new);
 
-// --- Filtre par priorité (null = toutes) ---
 class PriorityFilterNotifier extends Notifier<Priority?> {
   @override
   Priority? build() => null;

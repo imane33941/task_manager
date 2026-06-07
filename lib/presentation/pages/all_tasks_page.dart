@@ -21,15 +21,8 @@ class AllTasksPage extends ConsumerStatefulWidget {
 }
 
 class _AllTasksPageState extends ConsumerState<AllTasksPage> {
-  final _searchFocus = FocusNode();
   bool _isKanbanView = false;
   String? _selectedTaskId;
-
-  @override
-  void dispose() {
-    _searchFocus.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +83,7 @@ class _AllTasksPageState extends ConsumerState<AllTasksPage> {
                 Padding(
                   padding: const EdgeInsets.all(16),
                   child: TextField(
-                    focusNode: _searchFocus,
+                    focusNode: ref.read(searchFocusProvider),
                     decoration: const InputDecoration(
                       labelText: 'Rechercher',
                       prefixIcon: Icon(Icons.search),
