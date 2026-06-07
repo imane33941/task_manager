@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:task_manager/application/project_list_provider.dart';
 import 'package:task_manager/core/date_extensions.dart';
+import 'package:task_manager/core/enum_labels.dart';
 
 import '../../application/task_list_provider.dart';
 import '../../domain/entities/task.dart';
@@ -156,7 +157,7 @@ class _TaskDialogContentState extends State<_TaskDialogContent> {
               items: Priority.values.map((priority) {
                 return DropdownMenuItem(
                   value: priority,
-                  child: Text(priority.name),
+                  child: Text(priority.label),
                 );
               }).toList(),
               onChanged: (value) {
@@ -176,7 +177,7 @@ class _TaskDialogContentState extends State<_TaskDialogContent> {
               items: TaskStatus.values.map((status) {
                 return DropdownMenuItem(
                   value: status,
-                  child: Text(status.name),
+                  child: Text(status.label),
                 );
               }).toList(),
               onChanged: (value) {

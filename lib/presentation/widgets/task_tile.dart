@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:task_manager/core/date_extensions.dart';
+import 'package:task_manager/core/enum_labels.dart';
 
 import '../../domain/entities/task.dart';
 import '../theme/priority_colors.dart';
@@ -94,7 +95,7 @@ class TaskTile extends StatelessWidget {
                   Text(
                     task.description.isNotEmpty
                         ? task.description
-                        : task.status.name,
+                        : task.status.label,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: theme.textTheme.bodySmall?.copyWith(
